@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct ListRowSubView: View {
+    let task: String
+    @State private var isDone: Bool = false
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Image(
+                systemName: isDone ?"checkmark.circle.fill" : "circle"
+            )
+                .onTapGesture {
+                    isDone.toggle()
+                }
+            Text(task)
+        }
     }
-}
-
-#Preview {
-    ListRowSubView()
 }
