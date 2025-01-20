@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AddTaskView: View {
     
+    @EnvironmentObject var listViewModel: ListViewModel
+    
     @State private var taskController = ""
     
     init(taskController: String = "") {
@@ -29,17 +31,20 @@ struct AddTaskView: View {
                 
                 
                 Button {
-                    
+                    listViewModel.addItem(title: taskController)
+                    taskController = ""
                 } label: {
                     Text("save".uppercased())
+                        .colorInvert()
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.black)
+                        .background(Color.primary)
                         .font(.headline)
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .padding()
                 }
+                .disableWithOpacity(taskController.count < 5)
 
                 Spacer()
                     .navigationTitle("Add Task")
@@ -49,6 +54,15 @@ struct AddTaskView: View {
 
     }
 }
+
+extension View{
+    
+    @ViewBuilder
+    func disableWithOpacity(_ condition: Bool)->some View{
+        self.disabled(condition).opacity(condition ? 0.5 : 1)
+    }
+}
+
 
 #Preview {
     AddTaskView()

@@ -9,25 +9,35 @@ import SwiftUI
 
 struct TodoListView: View {
     
-    @State var todoList: [String] = [
-        "Buy a Macbook",
-        "Clean the home",
-        "Wash my car",
-        "Go to shopping",
-        "Buy a AirPods",
-        "Talk with someone"
-    ]
+    @EnvironmentObject var listViewModel: ListViewModel
+    
+    @State var animate: Bool = false
     
     var body: some View {
         NavigationStack{
-            List {
-                ForEach(todoList, id: \.self) { task in
-                    ListRowSubView(task: task)
+            ZStack{
+                
+                if listViewModel.items.isEmpty {
+                    NoItemSubView()
+                        .transition(.opacity)
+                        .animation(.easeIn, value: animate)
+                }else{
+                    
+                    List {
+                        ForEach(listViewModel.items) { task in
+                            ListRowSubView(task: task)
+                        }
+                        .onDelete(perform: listViewModel.delete)
+                        .onMove(perform: listViewModel.moveItem)
+                        .listStyle(PlainListStyle())
+                    }
                 }
             }
             .navigationTitle("Todo List 📝")
-            .listStyle(PlainListStyle())
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    EditButton()
+                }
                 ToolbarItem {
                     NavigationLink("Add") {
                         AddTaskView()
@@ -36,10 +46,12 @@ struct TodoListView: View {
             }
         }
     }
+    
 }
 
 #Preview {
     TodoListView()
+        .environmentObject(ListViewModel())
 }
 
 
